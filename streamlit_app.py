@@ -37,7 +37,7 @@ if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.token = None
     st.session_state.username = None
-    st.session_state.messages = []
+    st.session_state.messages = [{"role": "assistant", "content": "How can I help you?"}]
 
 # Main content area
 if not st.session_state.logged_in:
@@ -77,23 +77,19 @@ else:
         st.session_state.logged_in = False
         st.session_state.token = None
         st.session_state.username = None
-        st.session_state.messages = []
+        st.session_state.messages = [{"role": "assistant", "content": "How can I help you?"}]
         st.experimental_rerun()
     
-    st.write("How can I help you?")
+    # Display chat messages
+    for msg in st.session_state.messages:
+        st.chat_message(msg["role"]).write(msg["content"])
 
-    # Chat functionality
-
-    chat_container = st.container()
-    
-    for message in st.session_state.messages:
-        chat_container.write(message)
+    # Chat input
+    if user_message := st.chat_input():
+        st.session_state.messages.append({"role": "user", "content": user_message})
+        st.chat_message("user").write(user_message)
         
-    user_message = chat_container.text_input("Your message", "")
-    send_button = chat_container.button("Send")
-
-    if send_button and user_message:
-        st.session_state.messages.append(f"You: {user_message}")
         bot_response = chat_with_bot(st.session_state.username, user_message, st.session_state.token)
         if bot_response:
-            st.session_state.messages.append(f"Bot: {bot_response}")
+            st.session_state.messages.append({"role": "assistant", "content": bot_response})
+            st.chat_message("assistant").write(bot_response)
