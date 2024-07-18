@@ -5,6 +5,10 @@ import pymongo
 from bson.objectid import ObjectId
 import requests
 import json
+import os
+
+# Assuming FIREWORKAI_API_KEY is stored in environment variables
+FIREWORKAI_API_KEY = os.getenv('FIREWORKAI_API_KEY')
 
 app = FastAPI()
 
@@ -59,7 +63,7 @@ def get_fireworks_response(user_message: str):
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "Authorization": "Bearer JqHGWbAlvB24DRxSrzfRMAerqWDCgcYmeGPwTSbdAvRAnC11"
+        "Authorization": f"Bearer {FIREWORKAI_API_KEY}"
     }
     response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
     if response.status_code == 200:
